@@ -1,6 +1,6 @@
 import {Ext, PLUGIN_NAME} from "./values";
 import {getGroupInfo, Init, resetAll, Save} from "./io/io";
-import {matchMessage, RecordBoard} from "./utils";
+import {matchMessage, RecordBoard, removeItemsByUserIndices} from "./utils";
 
 function main() {
   // 注册扩展
@@ -54,24 +54,43 @@ function main() {
         return ret;
       }
       case 'del': {
-        allArgs = cmdArgs.eatPrefixWith("del")[0];
+        allArgs = cmdArgs.getRestArgsFrom(2);
+        if (!allArgs) {
+          seal.replyToSender(ctx, msg, '请输入要删除的笔记编号，多个编号用空格分隔');
+          return seal.ext.newCmdExecuteResult(true);
+        }
+        let allArgsArr = allArgs.split(' ');
+        let groupInfo = getGroupInfo(ctx.group.groupId, ctx.group.groupName);
+        let member = groupInfo.getMember(ctx.player.userId, ctx.player.name);
+        try {
+          member.groupPersonalBooks = removeItemsByUserIndices(member.groupPersonalBooks, allArgsArr);
+          Save(ext);
+          seal.replyToSender(ctx, msg, '已删除指定笔记: ' + allArgs);
+        } catch (e) {
+          seal.replyToSender(ctx, msg, e);
+        }
+        return seal.ext.newCmdExecuteResult(true);
+      }
+      case 'cutoff': { // 指定一个编号，删除编号之前的所有笔记
         let num = parseInt(allArgs);
         if (isNaN(num) || num <= 0) {
-          seal.replyToSender(ctx, msg, '序号不合法，应为正整数');
+          seal.replyToSender(ctx, msg, '请输入正确的笔记编号');
           return seal.ext.newCmdExecuteResult(true);
-        } else {
-          let groupInfo = getGroupInfo(ctx.group.groupId, ctx.group.groupName);
-          let member = groupInfo.getMember(ctx.player.userId, ctx.player.name);
-          if (num > member.groupPersonalBooks.length) {
-            seal.replyToSender(ctx, msg, '条目超出范围');
-            return seal.ext.newCmdExecuteResult(true);
-          } else {
-            member.groupPersonalBooks = RecordBoard.delete(member.groupPersonalBooks, num);
-            Save(ext);
-            seal.replyToSender(ctx, msg, `已删除${seal.format(ctx, "{$t玩家}")}的第${num}条笔记`);
-            return seal.ext.newCmdExecuteResult(true);
-          }
         }
+        let groupInfo = getGroupInfo(ctx.group.groupId, ctx.group.groupName);
+        let member = groupInfo.getMember(ctx.player.userId, ctx.player.name);
+        if (num > member.groupPersonalBooks.length) {
+          seal.replyToSender(ctx, msg, '编号超出范围');
+          return seal.ext.newCmdExecuteResult(true);
+        }
+        try {
+          member.groupPersonalBooks.splice(num - 1);
+          Save(ext);
+          seal.replyToSender(ctx, msg, '已删除编号为' + num + '之前的所有笔记');
+        } catch (e) {
+          seal.replyToSender(ctx, msg, e);
+        }
+        return seal.ext.newCmdExecuteResult(true);
       }
       case 'reset': {
         if (ctx.privilegeLevel < 100) {

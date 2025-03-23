@@ -91,3 +91,39 @@ export function matchMessage(input: string, symbols: string[]): number | null {
   }
   return null;
 }
+
+export function removeItemsByUserIndices<T>(arrayA: T[], userIndicesB: string[]): T[] {
+  // 字符串数组转换为数字索引数组（用户输入从1开始）
+  const numericIndices: number[] = userIndicesB.map((indexStr, idx) => {
+    const indexNum = Number(indexStr);
+    if (!Number.isInteger(indexNum) || indexNum <= 0) {
+      throw new Error(`存在非法的索引 '${indexStr}' (位置: ${idx})，索引必须为正整数`);
+    }
+    return indexNum - 1; // 用户输入的索引减去1
+  });
+
+  // 检测重复索引
+  const indexSet = new Set(numericIndices);
+  if (indexSet.size !== numericIndices.length) {
+    throw new Error('含有重复索引');
+  }
+
+  // 检测索引范围有效性
+  numericIndices.forEach((numIndex) => {
+    if (numIndex < 0 || numIndex >= arrayA.length) {
+      throw new Error(`存在超出范围的索引 '${numIndex + 1}'`);
+    }
+  });
+
+  // 倒序排序索引，防止错位
+  const sortedIndices = numericIndices.sort((a, b) => b - a);
+
+  // 创建副本以避免直接修改原数组A
+  const result = [...arrayA];
+
+  sortedIndices.forEach((index) => {
+    result.splice(index, 1);
+  });
+
+  return result;
+}
