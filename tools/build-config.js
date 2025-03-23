@@ -1,4 +1,4 @@
-var filename = 'sealdice-js-ext.js'
+var filename = 'clue.js'
 
 module.exports = {
   dev: {
@@ -40,7 +40,7 @@ module.exports = {
     // Uses incremental compilation (see `chokidar.on`).
     // incremental: true,
     // Removes whitespace, etc. depending on `NODE_ENV=...`.
-    minify: true,
+    minify: false,
     // Bundles JavaScript to (see `entryPoints`).
     outfile: "dist/" + filename,
     // Others
@@ -49,7 +49,7 @@ module.exports = {
     color: true,
     sourcemap: false,
     external: ['csharp', 'puerts'],
-    target: 'es6',
+    target: 'es2019',
     treeShaking: true,
     logLevel: 'error',
     define: {'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')},

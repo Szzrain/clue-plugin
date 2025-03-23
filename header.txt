@@ -1,10 +1,9 @@
 // ==UserScript==
-// @name         模板项目
-// @author       作者名
+// @name         clue-plugin
+// @author       Szzrain
 // @version      1.0.0
-// @description  这是海豹的js扩展模板项目，请自行修改信息
-// @timestamp    1674477074
-// 2023/1/23
-// @license      MIT
-// @homepageURL  https://github.com/sealdice/sealdice-js-template
+// @description  线索插件
+// @timestamp    1742610388
+// @license      AGPL-3.0
+// @homepageURL  https://github.com/Szzrain/clue-plugin
 // ==/UserScript==

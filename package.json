@@ -1,11 +1,11 @@
 {
-  "name": "a-long-story",
+  "name": "clue",
   "version": "1.0.0",
-  "description": "once upon a time, ...",
+  "description": "a clue note plugin for sealdice",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
-  "repository": "https://github.com/sealdice/seal-swordworld",
-  "license": "Apache-2.0",
+  "repository": "https://github.com/Szzrain/clue-plugin",
+  "license": "MIT",
   "keywords": [],
   "scripts": {
     "build": "cross-env NODE_ENV=production node tools/build.js",
