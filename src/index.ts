@@ -78,7 +78,7 @@ function main() {
         return seal.ext.newCmdExecuteResult(true);
       }
       case 'cutoff': { // 指定一个编号，删除编号之前的所有笔记
-        let num = parseInt(allArgs);
+        let num = parseInt(cmdArgs.getArgN(2));
         if (isNaN(num) || num <= 0) {
           seal.replyToSender(ctx, msg, '请输入正确的笔记编号');
           return seal.ext.newCmdExecuteResult(true);
@@ -90,9 +90,9 @@ function main() {
           return seal.ext.newCmdExecuteResult(true);
         }
         try {
-          member.groupPersonalBooks.splice(num - 1);
+          member.groupPersonalBooks.splice(0, num); // 从索引 0 开始删除 num 条笔记
           Save(ext);
-          seal.replyToSender(ctx, msg, '已删除编号为' + num + '之前的所有笔记');
+          seal.replyToSender(ctx, msg, '已删除编号为 ' + num + ' 之前的所有笔记');
         } catch (e) {
           seal.replyToSender(ctx, msg, e);
         }

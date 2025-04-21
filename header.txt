@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         clue-plugin
 // @author       Szzrain
-// @version      1.0.2
+// @version      1.0.3
 // @description  线索插件
 // @timestamp    1745208774
 // @license      AGPL-3.0
