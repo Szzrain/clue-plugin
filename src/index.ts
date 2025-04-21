@@ -36,7 +36,13 @@ function main() {
   // 编写指令
   const cmdClue = seal.ext.newCmdItemInfo();
   cmdClue.name = 'clue';
-  cmdClue.help = 'TODO (doc)';
+  cmdClue.help = '.c [页码] 查看群内笔记\n' +
+  '.c [内容] 记录群内笔记\n' +
+  '.c help 查看帮助\n' +
+  '.c del [编号] 删除指定笔记\n' +
+  '.c cutoff [编号] 删除指定编号之前的所有笔记\n' +
+  '.c find [内容] 查找笔记\n' +
+  '.c reset 重置所有群内笔记（仅限骰主）';
   cmdClue.raw = true;
   cmdClue.checkCurrentBotOn = true;
   cmdClue.solve = (ctx, msg, cmdArgs) => {
@@ -92,6 +98,31 @@ function main() {
         }
         return seal.ext.newCmdExecuteResult(true);
       }
+      case 'find': {
+        if (!cmdArgs.getArgN(2)) {
+          seal.replyToSender(ctx, msg, '请输入要查找的内容');
+          return seal.ext.newCmdExecuteResult(true);
+        }
+        let groupInfo = getGroupInfo(ctx.group.groupId, ctx.group.groupName);
+        let member = groupInfo.getMember(ctx.player.userId, ctx.player.name);
+        let result = member.groupPersonalBooks
+          .map((content, index) => ({ content, index: index + 1 })) // 保留原始序号
+          .filter((book) => book.content.includes(cmdArgs.getArgN(2)))
+          .reverse(); // 倒序排列
+
+        if (result.length === 0) {
+          seal.replyToSender(ctx, msg, '未找到相关笔记');
+          return seal.ext.newCmdExecuteResult(true);
+        }
+
+        let view = `====[${seal.format(ctx, "{$t玩家}")} 的群内笔记 (查询:${cmdArgs.getArgN(2)}) ]====\n`;
+        result.forEach((book) => {
+          view += `[${book.index}] ${book.content}\n`;
+        });
+
+        seal.replyToSender(ctx, msg, view);
+        return seal.ext.newCmdExecuteResult(true);
+      }
       case 'reset': {
         if (ctx.privilegeLevel < 100) {
           seal.replyToSender(ctx, msg, '你没有权限使用此指令');
@@ -112,7 +143,7 @@ function main() {
         let num = parseInt(val);
         if (!val) {
           let groupInfo = getGroupInfo(ctx.group.groupId, ctx.group.groupName);
-          let view = `====[${seal.format(ctx, "{$t玩家}")} 的群内笔记]====\n\n`;
+          let view = `====[${seal.format(ctx, "{$t玩家}")} 的群内笔记]====\n`;
           view += RecordBoard.viewFormatted(groupInfo.getMember(ctx.player.userId, ctx.player.name).groupPersonalBooks);
           seal.replyToSender(ctx, msg, view);
           return seal.ext.newCmdExecuteResult(true);
@@ -127,7 +158,7 @@ function main() {
             //   seal.replyToSender(ctx, msg, '页码超出范围');
             //   return seal.ext.newCmdExecuteResult(true);
             // }
-            let view = `====[${seal.format(ctx, "{$t玩家}")} 的群内笔记]====\n\n`;
+            let view = `====[${seal.format(ctx, "{$t玩家}")} 的群内笔记]====\n`;
             view += RecordBoard.viewFormatted(member.groupPersonalBooks, num);
             seal.replyToSender(ctx, msg, view);
             return seal.ext.newCmdExecuteResult(true);

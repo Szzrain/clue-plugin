@@ -68,11 +68,11 @@ export class RecordBoard {
     let output = ``;
 
     output += pageItems
-      .map(item => `${item.index}. ${item.record}\n\n-----`)
-      .join('\n\n');
+      .map(item => `[${item.index}] ${item.record}\n-----`)
+      .join('\n');
 
     if (pageItems.length > 0) {
-      output = output.replace(/\n\n-----$/, ''); // 去掉最后的分隔线
+      output = output.replace(/\n-----$/, ''); // 去掉最后的分隔线
     }
     output += `\n\n第[${page}/${totalPages}]页`;
     return output;

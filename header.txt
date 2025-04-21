@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         clue-plugin
 // @author       Szzrain
-// @version      1.0.1
+// @version      1.0.2
 // @description  线索插件
-// @timestamp    1742610388
+// @timestamp    1745208774
 // @license      AGPL-3.0
 // @homepageURL  https://github.com/Szzrain/clue-plugin
 // @updateUrl    https://github.com/Szzrain/clue-plugin/releases/download/pre-release/clue.js
